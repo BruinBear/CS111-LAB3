@@ -1,0 +1,23 @@
+# Fill in your name, student ID, and email address in this file.
+# If you are working in a team, fill out the information for both team 
+# members.
+
+# SUBMIT THE LAB from only one partner. This file will be
+# automatically parsed in order to give both team members credit for the
+# lab.
+
+# If you have any other information you'd like us to know, please add it at the end of the file.
+some helpers functions are provided during tuan's discussion and office hour
+
+# Partner 1
+Name: jingyu liu
+Student ID: 404193267
+Email: ljy1681@gmail.com
+
+# Partner 2 (if you're working in a team)
+Name: zhinan guan
+Student ID: 004118232
+Email: zhinanguan@gmail.com
+
+# Add any other information you'd like us to know below this line.
+We couldn't get ospfs_write to work for copying the cat image. read works fine.

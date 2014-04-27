@@ -1,0 +1,115 @@
+ospFsh
+os_magic
+os_nblocks
+os_ninodos
+os_finished
+
+
+
+bootsector
+partition table  block 0
+===============
+superblock
+===============  block 1
+Freeblock bitmap
+===============  block 2
+Inodes
+===============
+File and directory data blocks
+===============
+
+
+oi_size
+oi_ftype    
+oi_nlink    meta data about the file
+oi_mode
+
+oi_dir[OSPFS_NDIRECT]  -> direct pointer to blocks
+
+bigger size use oi_indirect
+
+			0  256datablocks
+indirect--------->256        
+
+
+
+
+each inode is a number
+
+block 2 to x/1024/8/1024 -1  freeblock bitmap region
+
+block # x/1024/8/1024
+first block in the indoe table
+
+
+inode1 -> root directory
+       -> pointer to DATA block
+file1.txt subdiectory->file2.txt file3.txt
+		       inode$ file2.txt -> data file2.txt
+
+===========================================================================
+
+ospfs_read(struct file* filp, ch *buffer,  count, ...)
+	ospfs_inode_t *oi = ospfs_inode(filp->f_entry->d_node->i_ino);
+	int retval=0;
+	size_t amount;
+	if (*f_pos + count < *f_pos) //overflow detection
+		return -EIO;
+	else if(*f_pos>=oi->oi->oi_size) //f_pos parameter is out of range
+		count = 0;
+	else if(*f_pos+count > oi->oi_size)
+		coutn = oi->oi_size - *f_pos;
+while (amount < count && retval == 0)
+	uint32_t blockno = ospfs_inode_blockno(oi, *f_pos);
+	uint32_t n;
+	char *data;
+	uint_32 data_offset;
+	uint_32 bytes_left_to_copy = count - amount;
+	if(blockno == 0){
+		retval = -EIO
+goto done;
+	}
+	data=ospfs_block(blockno);
+	data_offset = *f+pos % OSPFS_BLKSIZE;
+	n = OSPFS_BLKSIZE - data_offset;
+	
+	if(n>bytes_left_to_copy)
+		n = byte_left_to_copy;
+
+	if(copy_to_user(buffer, data+data_offset,n)>0)
+		return -EFAULT;
+	
+	buffer +=n;
+	amount +=n;
+	*f_pos+=n;
+	}
+	done:
+		return (retval >=0 ? amount:retval);
+}
+
+
+===========================================================================
+ospfs_create(struct inode *dir...) //create a regular  file
+{
+	//step 1 create a new inode structure for this file
+	//step 2 create a new directory entry for this file
+	ospfs_inode_t *dir_oi = ospfs_inode(dir->ino);
+	uint32_t entry_ino = 0;
+	ospfs_inode_t * File_oi = NULL; //STEP1
+	ospfs_direentry_t *new_entry = NULL; //STEP2
+
+	uint32_t block_no=0;
+	struct inode *i;
+	//some error handling codehere
+	entry_ino = find_free_inode();//some helper
+	if(entry_ino  ==0)
+		return -ENOSPC;
+	
+	file_oi = ospfs_inode(entry_ino);
+	file_oi->oi_size=0;//empty
+	file_oi->oi_ftype = OSPF S_FTYPE+REG;
+	file_oi->oi_nlink=1;//hardlink
+	file_oi->oi_mode = mode;
+
+
+
